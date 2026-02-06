@@ -6,150 +6,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: Arial, sans-serif;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
 body{
-    background: url("file_000000004d7471f48dc12e2aa90a41b4.png") no-repeat center center fixed;
-    background-size: cover;
-    color:#fff;
-    text-align:center;
+    background:url("file_000000004d7471f48dc12e2aa90a41b4.png") no-repeat center center fixed;
+    background-size:cover;color:#fff;text-align:center;
 }
-
-/* فيديو البداية */
-#introVideo{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:#000;
-    z-index:9999;
-}
-#introVideo video{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-/* عد تنازلي */
+#introVideo{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:9999;}
+#introVideo video{width:100%;height:100%;object-fit:cover;}
 #countdown{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    background:rgba(0,0,0,0.7);
-    color:gold;
-    font-size:24px;
-    padding:10px 15px;
-    border-radius:10px;
-    z-index:10000;
+    position:fixed;bottom:20px;right:20px;background:rgba(0,0,0,0.7);
+    color:gold;font-size:24px;padding:10px 15px;border-radius:10px;z-index:10000;
 }
-
-/* الموقع */
-.overlay{
-    background:rgba(0,0,0,0.7);
-    min-height:100vh;
+#skipBtn{
+    position:fixed;bottom:70px;right:20px;padding:10px 15px;background:gold;color:#000;border:none;border-radius:8px;font-size:16px;cursor:pointer;display:none;z-index:10001;
 }
+.overlay{background:rgba(0,0,0,0.7);min-height:100vh;}
 .hidden{display:none;}
-
-header{
-    padding:20px;
-    border-bottom:2px solid gold;
-}
-header img{
-    width:120px;
-    margin-bottom:10px;
-}
-
-h1{
-    color:gold;
-    font-size:28px;
-}
-
-.container{
-    padding:20px;
-    max-width:1000px;
-    margin:auto;
-}
-
-input, button{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:none;
-    border-radius:8px;
-    font-size:16px;
-}
-input{
-    background:#222;
-    color:#fff;
-}
-button{
-    background:gold;
-    color:#000;
-    font-weight:bold;
-    cursor:pointer;
-}
-button:disabled{
-    background:#555;
-    cursor:not-allowed;
-}
-
-.prizes{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
-}
-
-.card{
-    background:#111;
-    border:2px solid #333;
-    border-radius:12px;
-    padding:10px;
-    cursor:pointer;
-}
-
-.card img{
-    width:100%;
-    border-radius:10px;
-}
-
-.card.selected{
-    border:3px solid gold;
-}
-
-.uc-text{
-    margin-top:10px;
-    font-size:20px;
-    color:#00ffcc;
-}
-
-.loading{
-    font-size:20px;
-    margin-top:20px;
-}
-
-.success{
-    font-size:22px;
-    color:#00ff66;
-    margin-top:20px;
-}
+header{padding:20px;border-bottom:2px solid gold;}
+header img{width:120px;margin-bottom:10px;}
+h1{color:gold;font-size:28px;}
+.container{padding:20px;max-width:1000px;margin:auto;}
+input,button{width:100%;padding:12px;margin:10px 0;border:none;border-radius:8px;font-size:16px;}
+input{background:#222;color:#fff;}
+button{background:gold;color:#000;font-weight:bold;cursor:pointer;}
+.prizes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
+.card{background:#111;border:2px solid #333;border-radius:12px;padding:10px;cursor:pointer;}
+.card img{width:100%;border-radius:10px;}
+.card.selected{border:3px solid gold;}
+.uc-text{margin-top:10px;font-size:20px;color:#00ffcc;}
+.loading{font-size:20px;margin-top:20px;}
+.success{font-size:22px;color:#00ff66;margin-top:20px;}
 </style>
 </head>
 
 <body>
 
-<!-- فيديو البداية -->
 <div id="introVideo">
     <video src="reel27.mp4" autoplay muted playsinline preload="auto"></video>
     <div id="countdown">13</div>
+    <button id="skipBtn" onclick="skipVideo()">تخطي الفيديو</button>
 </div>
 
-<!-- الموقع -->
 <div class="overlay hidden" id="site">
 
 <header>
@@ -159,7 +56,6 @@ button:disabled{
 
 <div class="container">
 
-<!-- صفحة الكود -->
 <div id="codePage">
     <h2>ادخل كود الجائزة</h2>
     <input id="codeInput" placeholder="اكتب الكود هنا">
@@ -167,14 +63,11 @@ button:disabled{
     <p id="codeError" style="color:red;"></p>
 </div>
 
-<!-- صفحة الجوائز -->
 <div id="prizePage" class="hidden">
     <h2>اختر جائزتك</h2>
     <div id="prizeContainer" class="prizes"></div>
-    <button id="continueBtn" class="hidden" onclick="goToForm()">متابعة</button>
 </div>
 
-<!-- صفحة البيانات -->
 <div id="formPage" class="hidden">
     <h2>⚠️ ادخل البيانات بحذر شديد</h2>
     <input id="playerId" placeholder="ادخل الأيدي">
@@ -183,12 +76,10 @@ button:disabled{
     <button onclick="submitForm()">إرسال الطلب</button>
 </div>
 
-<!-- التحميل -->
 <div id="loadingPage" class="hidden">
     <div class="loading">⏳ جاري إرسال طلبك...</div>
 </div>
 
-<!-- النجاح -->
 <div id="successPage" class="hidden">
     <div class="success">
         ✅ تم إرسال طلبك<br><br>
@@ -201,14 +92,15 @@ button:disabled{
 </div>
 
 <script>
-/* منع التكرار */
+// منع التكرار
 if(localStorage.getItem("used")){
     document.body.innerHTML="<h2 style='margin-top:50px;color:red'>تم استخدام الجائزة من قبل على هذا الجهاز</h2>";
 }
 
-/* التحكم في الفيديو والعد التنازلي */
+// فيديو وبداية الموقع مع العد التنازلي وزر التخطي
 const video = document.querySelector("#introVideo video");
 const countdownEl = document.getElementById("countdown");
+const skipBtn = document.getElementById("skipBtn");
 let countdown = 13;
 
 const countdownInterval = setInterval(()=>{
@@ -216,44 +108,41 @@ const countdownInterval = setInterval(()=>{
     countdownEl.innerText = countdown;
     if(countdown <= 0){
         clearInterval(countdownInterval);
-        video.pause();
-        document.getElementById("introVideo").style.display="none";
-        document.getElementById("site").classList.remove("hidden");
+        enterSite();
     }
 },1000);
 
-/* الجوائز */
+setTimeout(()=>{skipBtn.style.display="block";},5000);
+
+function skipVideo(){enterSite();}
+function enterSite(){
+    video.pause();
+    document.getElementById("introVideo").style.display="none";
+    document.getElementById("site").classList.remove("hidden");
+}
+
+// الجوائز
 let selected = [];
 let maxSelect = 1;
 
 function checkCode(){
     const code = codeInput.value;
+    const prizeContainer = document.getElementById("prizeContainer");
     prizeContainer.innerHTML="";
     selected=[];
-    codeError.innerText="";
+    document.getElementById("codeError").innerText="";
 
-    // شدات UC 8600
     if(code==="2808aàwfŕA@№17"){
         maxSelect=1;
-        prizeContainer.innerHTML=`
-        <div class="card" onclick="autoSelect()">
-            <img src="images.jpeg">
-            <div class="uc-text">8600 UC</div>
-        </div>`;
+        prizeContainer.innerHTML=`<div class="card" onclick="autoSelect()">
+            <img src="images.jpeg"><div class="uc-text">8600 UC</div></div>`;
         showPrizes();
-    }
-    // شدات UC 11860
-    else if(code==="negmprimo200917"){
+    } else if(code==="negmprimo200917"){
         maxSelect=1;
-        prizeContainer.innerHTML=`
-        <div class="card" onclick="autoSelect()">
-            <img src="images.jpeg">
-            <div class="uc-text">11860 UC</div>
-        </div>`;
+        prizeContainer.innerHTML=`<div class="card" onclick="autoSelect()">
+            <img src="images.jpeg"><div class="uc-text">11860 UC</div></div>`;
         showPrizes();
-    }
-    // السيارات 3 اختيار من 4
-    else if(code==="PMGC2026NEGM"){
+    } else if(code==="PMGC2026NEGM"){
         maxSelect=3;
         ["images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"].forEach(img=>{
             let d=document.createElement("div");
@@ -263,9 +152,7 @@ function checkCode(){
             prizeContainer.appendChild(d);
         });
         showPrizes();
-    }
-    // السيارات 1 اختيار من 4
-    else if(code==="2808aàwfŕA@№30"){
+    } else if(code==="2808aàwfŕA@№30"){
         maxSelect=1;
         ["images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"].forEach(img=>{
             let d=document.createElement("div");
@@ -275,9 +162,7 @@ function checkCode(){
             prizeContainer.appendChild(d);
         });
         showPrizes();
-    }
-    // السيارات/جوائز خاصة 1 اختيار
-    else if(code==="negmprimo200930"){
+    } else if(code==="negmprimo200930"){
         maxSelect=1;
         ["33c0c80f-e510-448f-bb50-43eb52c94119-500x500-iiYYO0jYdDhjt2Bty73nVFeQUXDoAHtom88JoBDA.jpg",
          "images (13).jpeg",
@@ -290,44 +175,51 @@ function checkCode(){
             prizeContainer.appendChild(d);
         });
         showPrizes();
-    }
-    else{
-        codeError.innerText="الكود غير صحيح";
+    } else{
+        document.getElementById("codeError").innerText="الكود غير صحيح";
     }
 }
 
 function showPrizes(){
-    codePage.classList.add("hidden");
-    prizePage.classList.remove("hidden");
+    document.getElementById("codePage").classList.add("hidden");
+    document.getElementById("prizePage").classList.remove("hidden");
 }
 
 function autoSelect(){
-    continueBtn.classList.remove("hidden");
+    goToForm();
 }
 
 function selectPrize(card,img){
     if(selected.includes(img)){
         card.classList.remove("selected");
         selected=selected.filter(i=>i!==img);
-    }else if(selected.length<maxSelect){
+    } else if(selected.length<maxSelect){
         selected.push(img);
         card.classList.add("selected");
     }
-    continueBtn.classList.toggle("hidden",selected.length!==maxSelect);
+
+    if(selected.length===maxSelect){
+        goToForm();
+    }
 }
 
 function goToForm(){
-    prizePage.classList.add("hidden");
-    formPage.classList.remove("hidden");
+    document.getElementById("prizePage").classList.add("hidden");
+    document.getElementById("formPage").classList.remove("hidden");
 }
 
 function submitForm(){
-    if(!playerId.value||!phone.value||!name.value) return;
-    formPage.classList.add("hidden");
-    loadingPage.classList.remove("hidden");
+    const playerId = document.getElementById("playerId").value;
+    const phone = document.getElementById("phone").value;
+    const name = document.getElementById("name").value;
+    if(!playerId || !phone || !name) return;
+
+    document.getElementById("formPage").classList.add("hidden");
+    document.getElementById("loadingPage").classList.remove("hidden");
+
     setTimeout(()=>{
-        loadingPage.classList.add("hidden");
-        successPage.classList.remove("hidden");
+        document.getElementById("loadingPage").classList.add("hidden");
+        document.getElementById("successPage").classList.remove("hidden");
         localStorage.setItem("used","true");
     },5000);
 }
