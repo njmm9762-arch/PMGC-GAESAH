@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>NEGMPMGC - PUBG Mobile Rewards</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    background:#0b0b0b;
+    color:#fff;
+    text-align:center;
+}
+
+.hidden{display:none;}
+
+header{
+    padding:20px;
+    border-bottom:2px solid gold;
+}
+
+header img{
+    width:120px;
+    margin-bottom:10px;
+}
+
+h1{
+    color:gold;
+    font-size:28px;
+}
+
+.container{
+    padding:20px;
+    max-width:1000px;
+    margin:auto;
+}
+
+input, button{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+}
+
+input{
+    background:#222;
+    color:#fff;
+}
+
+button{
+    background:gold;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:disabled{
+    background:#555;
+    cursor:not-allowed;
+}
+
+.prizes{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+}
+
+.card{
+    background:#111;
+    border:2px solid #333;
+    border-radius:12px;
+    padding:10px;
+    cursor:pointer;
+}
+
+.card img{
+    width:100%;
+    border-radius:10px;
+}
+
+.card.selected{
+    border:3px solid gold;
+}
+
+.uc-text{
+    margin-top:10px;
+    font-size:20px;
+    color:#00ffcc;
+}
+
+.loading{
+    font-size:20px;
+    margin-top:20px;
+}
+
+.success{
+    font-size:22px;
+    color:#00ff66;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <img src="unnamed.webp">
+    <h1>NEGMPMGC</h1>
+</header>
+
+<div class="container">
+
+<!-- صفحة الكود -->
+<div id="codePage">
+    <h2>ادخل كود الجائزة</h2>
+    <input id="codeInput" placeholder="اكتب الكود هنا">
+    <button onclick="checkCode()">دخول</button>
+    <p id="codeError" style="color:red;"></p>
+</div>
+
+<!-- صفحة الجوائز -->
+<div id="prizePage" class="hidden">
+    <h2>اختر جائزتك</h2>
+    <div id="prizeContainer" class="prizes"></div>
+    <button id="continueBtn" class="hidden" onclick="goToForm()">متابعة</button>
+</div>
+
+<!-- صفحة البيانات -->
+<div id="formPage" class="hidden">
+    <h2>⚠️ ادخل البيانات بحذر شديد</h2>
+    <input id="playerId" placeholder="ادخل الأيدي">
+    <input id="phone" placeholder="ادخل رقم هاتفك">
+    <input id="name" placeholder="اسمك يا بطل">
+    <button onclick="submitForm()">إرسال الطلب</button>
+</div>
+
+<!-- التحميل -->
+<div id="loadingPage" class="hidden">
+    <div class="loading">⏳ جاري إرسال طلبك...</div>
+</div>
+
+<!-- النجاح -->
+<div id="successPage" class="hidden">
+    <div class="success">
+        ✅ تم إرسال طلبك<br><br>
+        🏆 انتظر جائزتك خلال 48 ساعة<br><br>
+        شكراً يا بطل 💪
+    </div>
+</div>
+
+</div>
+
+<script>
+if(localStorage.getItem("used")){
+    document.body.innerHTML="<h2 style='margin-top:50px;color:red'>تم استخدام الجائزة من قبل على هذا الجهاز</h2>";
+}
+
+let selected = [];
+let maxSelect = 1;
+
+function checkCode(){
+    const code = document.getElementById("codeInput").value;
+    const error = document.getElementById("codeError");
+    const prizePage = document.getElementById("prizePage");
+    const container = document.getElementById("prizeContainer");
+
+    container.innerHTML="";
+    selected=[];
+    error.innerText="";
+
+    if(code === "2808aàwfŕA@№17"){
+        maxSelect = 1;
+        container.innerHTML = `
+        <div class="card" onclick="autoSelect()">
+            <img src="images.jpeg">
+            <div class="uc-text">8600 UC</div>
+        </div>`;
+        showPrizes();
+    }
+    else if(code === "negmprimo200917"){
+        maxSelect = 1;
+        container.innerHTML = `
+        <div class="card" onclick="autoSelect()">
+            <img src="images.jpeg">
+            <div class="uc-text">11860 UC</div>
+        </div>`;
+        showPrizes();
+    }
+    else if(code === "PMGC2026NEGM"){
+        maxSelect = 3;
+        let imgs = ["images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"];
+        imgs.forEach(img=>{
+            let d=document.createElement("div");
+            d.className="card";
+            d.innerHTML=`<img src="${img}">`;
+            d.onclick=()=>selectPrize(d,img);
+            container.appendChild(d);
+        });
+        showPrizes();
+    }
+    else{
+        error.innerText="الكود غير صحيح";
+    }
+}
+
+function showPrizes(){
+    document.getElementById("codePage").classList.add("hidden");
+    document.getElementById("prizePage").classList.remove("hidden");
+}
+
+function autoSelect(){
+    document.getElementById("continueBtn").classList.remove("hidden");
+}
+
+function selectPrize(card,img){
+    if(selected.includes(img)){
+        card.classList.remove("selected");
+        selected = selected.filter(i=>i!==img);
+    }else{
+        if(selected.length < maxSelect){
+            selected.push(img);
+            card.classList.add("selected");
+        }
+    }
+    if(selected.length === maxSelect){
+        document.getElementById("continueBtn").classList.remove("hidden");
+    }else{
+        document.getElementById("continueBtn").classList.add("hidden");
+    }
+}
+
+function goToForm(){
+    document.getElementById("prizePage").classList.add("hidden");
+    document.getElementById("formPage").classList.remove("hidden");
+}
+
+function submitForm(){
+    if(!playerId.value || !phone.value || !name.value) return;
+    document.getElementById("formPage").classList.add("hidden");
+    document.getElementById("loadingPage").classList.remove("hidden");
+
+    setTimeout(()=>{
+        document.getElementById("loadingPage").classList.add("hidden");
+        document.getElementById("successPage").classList.remove("hidden");
+        localStorage.setItem("used","true");
+    },5000);
+}
+</script>
+
+</body>
+</html>
