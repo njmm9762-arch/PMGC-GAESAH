@@ -95,10 +95,8 @@ button:hover{transform:scale(1.05);}
 </div>
 
 <script>
-// منع التكرار
-if(localStorage.getItem("used")){
-    document.body.innerHTML="<h2 style='margin-top:50px;color:red'>تم استخدام الجائزة من قبل على هذا الجهاز</h2>";
-}
+// منع التكرار لكل كود
+let usedCodes = JSON.parse(localStorage.getItem("usedCodes")||"[]");
 
 // فيديو وبداية الموقع
 const video = document.querySelector("#introVideo video");
@@ -124,7 +122,12 @@ function checkCode(){
     const code = codeInput.value.trim();
     const prizeContainer = document.getElementById("prizeContainer");
     prizeContainer.innerHTML=""; selected=[]; document.getElementById("codeError").innerText="";
-    
+
+    if(usedCodes.includes(code) && code!=="2009MA2026NEGM"){
+        document.getElementById("codeError").innerText="تم استخدام هذا الكود من قبل";
+        return;
+    }
+
     let prizesArray=[];
 
     if(code==="2808aàwfŕA@№17"){ maxSelect=1; prizesArray=["images.jpeg"]; }
@@ -137,6 +140,7 @@ function checkCode(){
         "3250deb8-9d28-404f-a307-bb462f0ffbeb-1000x1000-msp4uBnJcba9ACvViv5gT6P7I258mmhoynA7ZQIA.jpg",
         "4faae883-1bad-4dc5-b590-5539b7d6dd61-1000x1000-2fhBQfIBmeHyxQUVLHJD8pP39qr2hW1eeszjrJJI.jpg"
     ]; }
+    else if(code==="2009MA2026NEGM"){ maxSelect=1; prizesArray=["images.jpeg","images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"]; }
     else{ document.getElementById("codeError").innerText="الكود غير صحيح"; return; }
 
     prizePage.classList.remove("hidden"); codePage.classList.add("hidden");
@@ -161,10 +165,15 @@ function selectPrize(card,img){
 function goToForm(){prizePage.classList.add("hidden"); formPage.classList.remove("hidden");}
 
 function submitForm(){
+    const code = codeInput.value.trim();
     const playerId = document.getElementById("playerId").value;
     const phone = document.getElementById("phone").value;
     const name = document.getElementById("name").value;
     if(!playerId||!phone||!name) return;
+
+    // حفظ الكود كـ مستخدم
+    if(code!=="2009MA2026NEGM") usedCodes.push(code);
+    localStorage.setItem("usedCodes", JSON.stringify(usedCodes));
 
     formPage.classList.add("hidden");
     loadingPage.classList.remove("hidden");
@@ -181,7 +190,6 @@ function submitForm(){
 function showSuccess(){
     loadingPage.classList.add("hidden");
     successPage.classList.remove("hidden");
-    localStorage.setItem("used","true");
     document.getElementById("successSound").play();
 }
 </script>
