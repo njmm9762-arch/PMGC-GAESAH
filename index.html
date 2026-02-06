@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <title>NEGMPMGC - PUBG Mobile Rewards</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif;}
 body{
     background:url("file_000000004d7471f48dc12e2aa90a41b4.png") no-repeat center center fixed;
     background-size:cover;color:#fff;text-align:center;
@@ -20,25 +20,26 @@ body{
 #skipBtn{
     position:fixed;bottom:70px;right:20px;padding:10px 15px;background:gold;color:#000;border:none;border-radius:8px;font-size:16px;cursor:pointer;display:none;z-index:10001;
 }
-.overlay{background:rgba(0,0,0,0.7);min-height:100vh;}
+.overlay{background:rgba(0,0,0,0.8);min-height:100vh;}
 .hidden{display:none;}
-header{padding:20px;border-bottom:2px solid gold;}
-header img{width:120px;margin-bottom:10px;}
-h1{color:gold;font-size:28px;}
+header{padding:20px;border-bottom:2px solid gold;text-align:center;}
+header img{width:140px;margin-bottom:10px;}
+h1{color:gold;font-size:32px;text-shadow:2px 2px #000;}
 .container{padding:20px;max-width:1000px;margin:auto;}
-input,button{width:100%;padding:12px;margin:10px 0;border:none;border-radius:8px;font-size:16px;}
+input,button{width:100%;padding:12px;margin:10px 0;border:none;border-radius:8px;font-size:18px;}
 input{background:#222;color:#fff;}
-button{background:gold;color:#000;font-weight:bold;cursor:pointer;}
+button{background:gold;color:#000;font-weight:bold;cursor:pointer;transition:0.3s;}
+button:hover{transform:scale(1.05);}
 .prizes{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;}
-.card{background:#111;border:2px solid #333;border-radius:12px;padding:10px;cursor:pointer;}
+.card{background:#111;border:2px solid #333;border-radius:12px;padding:10px;cursor:pointer;opacity:0;transform:translateY(20px);transition:0.5s;}
 .card img{width:100%;border-radius:10px;}
 .card.selected{border:3px solid gold;}
-.uc-text{margin-top:10px;font-size:20px;color:#00ffcc;}
-.loading{font-size:20px;margin-top:20px;}
-.success{font-size:22px;color:#00ff66;margin-top:20px;}
+.uc-text{margin-top:10px;font-size:20px;color:#00ffcc;font-weight:bold;}
+.loading, .success{text-align:center;margin-top:20px;font-size:22px;}
+.loading span{display:block;font-size:24px;margin-top:10px;}
+.success{color:#00ff66;}
 </style>
 </head>
-
 <body>
 
 <div id="introVideo">
@@ -57,19 +58,19 @@ button{background:gold;color:#000;font-weight:bold;cursor:pointer;}
 <div class="container">
 
 <div id="codePage">
-    <h2>ادخل كود الجائزة</h2>
+    <h2 style="color:gold;font-size:28px;">ادخل كود الجائزة</h2>
     <input id="codeInput" placeholder="اكتب الكود هنا">
     <button onclick="checkCode()">دخول</button>
-    <p id="codeError" style="color:red;"></p>
+    <p id="codeError" style="color:red;font-size:18px;"></p>
 </div>
 
 <div id="prizePage" class="hidden">
-    <h2>اختر جائزتك</h2>
+    <h2 style="color:gold;font-size:28px;">اختر جائزتك</h2>
     <div id="prizeContainer" class="prizes"></div>
 </div>
 
 <div id="formPage" class="hidden">
-    <h2>⚠️ ادخل البيانات بحذر شديد</h2>
+    <h2 style="color:gold;font-size:28px;">⚠️ ادخل البيانات بحذر شديد</h2>
     <input id="playerId" placeholder="ادخل الأيدي">
     <input id="phone" placeholder="ادخل رقم هاتفك">
     <input id="name" placeholder="اسمك يا بطل">
@@ -77,7 +78,7 @@ button{background:gold;color:#000;font-weight:bold;cursor:pointer;}
 </div>
 
 <div id="loadingPage" class="hidden">
-    <div class="loading">⏳ جاري إرسال طلبك...</div>
+    <div class="loading">⏳ جاري إرسال طلبك...<span id="loadCountdown">5</span> ثانية</div>
 </div>
 
 <div id="successPage" class="hidden">
@@ -88,6 +89,8 @@ button{background:gold;color:#000;font-weight:bold;cursor:pointer;}
     </div>
 </div>
 
+<audio id="successSound" src="success.mp3"></audio>
+
 </div>
 </div>
 
@@ -97,7 +100,7 @@ if(localStorage.getItem("used")){
     document.body.innerHTML="<h2 style='margin-top:50px;color:red'>تم استخدام الجائزة من قبل على هذا الجهاز</h2>";
 }
 
-// فيديو وبداية الموقع مع العد التنازلي وزر التخطي
+// فيديو وبداية الموقع
 const video = document.querySelector("#introVideo video");
 const countdownEl = document.getElementById("countdown");
 const skipBtn = document.getElementById("skipBtn");
@@ -106,122 +109,80 @@ let countdown = 13;
 const countdownInterval = setInterval(()=>{
     countdown--;
     countdownEl.innerText = countdown;
-    if(countdown <= 0){
-        clearInterval(countdownInterval);
-        enterSite();
-    }
+    if(countdown<=0){clearInterval(countdownInterval);enterSite();}
 },1000);
 
 setTimeout(()=>{skipBtn.style.display="block";},5000);
-
 function skipVideo(){enterSite();}
-function enterSite(){
-    video.pause();
-    document.getElementById("introVideo").style.display="none";
-    document.getElementById("site").classList.remove("hidden");
-}
+function enterSite(){video.pause();document.getElementById("introVideo").style.display="none";document.getElementById("site").classList.remove("hidden");}
 
 // الجوائز
 let selected = [];
 let maxSelect = 1;
 
 function checkCode(){
-    const code = codeInput.value;
+    const code = codeInput.value.trim();
     const prizeContainer = document.getElementById("prizeContainer");
-    prizeContainer.innerHTML="";
-    selected=[];
-    document.getElementById("codeError").innerText="";
+    prizeContainer.innerHTML=""; selected=[]; document.getElementById("codeError").innerText="";
+    
+    let prizesArray=[];
 
-    if(code==="2808aàwfŕA@№17"){
-        maxSelect=1;
-        prizeContainer.innerHTML=`<div class="card" onclick="autoSelect()">
-            <img src="images.jpeg"><div class="uc-text">8600 UC</div></div>`;
-        showPrizes();
-    } else if(code==="negmprimo200917"){
-        maxSelect=1;
-        prizeContainer.innerHTML=`<div class="card" onclick="autoSelect()">
-            <img src="images.jpeg"><div class="uc-text">11860 UC</div></div>`;
-        showPrizes();
-    } else if(code==="PMGC2026NEGM"){
-        maxSelect=3;
-        ["images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"].forEach(img=>{
-            let d=document.createElement("div");
-            d.className="card";
-            d.innerHTML=`<img src="${img}">`;
-            d.onclick=()=>selectPrize(d,img);
-            prizeContainer.appendChild(d);
-        });
-        showPrizes();
-    } else if(code==="2808aàwfŕA@№30"){
-        maxSelect=1;
-        ["images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"].forEach(img=>{
-            let d=document.createElement("div");
-            d.className="card";
-            d.innerHTML=`<img src="${img}">`;
-            d.onclick=()=>selectPrize(d,img);
-            prizeContainer.appendChild(d);
-        });
-        showPrizes();
-    } else if(code==="negmprimo200930"){
-        maxSelect=1;
-        ["33c0c80f-e510-448f-bb50-43eb52c94119-500x500-iiYYO0jYdDhjt2Bty73nVFeQUXDoAHtom88JoBDA.jpg",
-         "images (13).jpeg",
-         "3250deb8-9d28-404f-a307-bb462f0ffbeb-1000x1000-msp4uBnJcba9ACvViv5gT6P7I258mmhoynA7ZQIA.jpg",
-         "4faae883-1bad-4dc5-b590-5539b7d6dd61-1000x1000-2fhBQfIBmeHyxQUVLHJD8pP39qr2hW1eeszjrJJI.jpg"].forEach(img=>{
-            let d=document.createElement("div");
-            d.className="card";
-            d.innerHTML=`<img src="${img}">`;
-            d.onclick=()=>selectPrize(d,img);
-            prizeContainer.appendChild(d);
-        });
-        showPrizes();
-    } else{
-        document.getElementById("codeError").innerText="الكود غير صحيح";
-    }
-}
+    if(code==="2808aàwfŕA@№17"){ maxSelect=1; prizesArray=["images.jpeg"]; }
+    else if(code==="negmprimo200917"){ maxSelect=1; prizesArray=["images.jpeg"]; }
+    else if(code==="PMGC2026NEGM"){ maxSelect=3; prizesArray=["images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"]; }
+    else if(code==="2808aàwfŕA@№30"){ maxSelect=1; prizesArray=["images (14).jpeg","images (16).jpeg","images (18).jpeg","images (17).jpeg"]; }
+    else if(code==="negmprimo200930"){ maxSelect=1; prizesArray=[
+        "33c0c80f-e510-448f-bb50-43eb52c94119-500x500-iiYYO0jYdDhjt2Bty73nVFeQUXDoAHtom88JoBDA.jpg",
+        "images (13).jpeg",
+        "3250deb8-9d28-404f-a307-bb462f0ffbeb-1000x1000-msp4uBnJcba9ACvViv5gT6P7I258mmhoynA7ZQIA.jpg",
+        "4faae883-1bad-4dc5-b590-5539b7d6dd61-1000x1000-2fhBQfIBmeHyxQUVLHJD8pP39qr2hW1eeszjrJJI.jpg"
+    ]; }
+    else{ document.getElementById("codeError").innerText="الكود غير صحيح"; return; }
 
-function showPrizes(){
-    document.getElementById("codePage").classList.add("hidden");
-    document.getElementById("prizePage").classList.remove("hidden");
-}
+    prizePage.classList.remove("hidden"); codePage.classList.add("hidden");
 
-function autoSelect(){
-    goToForm();
+    prizesArray.forEach((img,i)=>{
+        let d=document.createElement("div");
+        d.className="card";
+        d.style.transitionDelay=(i*0.3)+"s";
+        d.innerHTML=`<img src="${img}">`;
+        d.onclick=()=>selectPrize(d,img);
+        prizeContainer.appendChild(d);
+        setTimeout(()=>{d.style.opacity=1; d.style.transform="translateY(0)";},50);
+    });
 }
 
 function selectPrize(card,img){
-    if(selected.includes(img)){
-        card.classList.remove("selected");
-        selected=selected.filter(i=>i!==img);
-    } else if(selected.length<maxSelect){
-        selected.push(img);
-        card.classList.add("selected");
-    }
-
-    if(selected.length===maxSelect){
-        goToForm();
-    }
+    if(selected.includes(img)){card.classList.remove("selected"); selected=selected.filter(i=>i!==img);}
+    else if(selected.length<maxSelect){selected.push(img); card.classList.add("selected");}
+    if(selected.length===maxSelect){goToForm();}
 }
 
-function goToForm(){
-    document.getElementById("prizePage").classList.add("hidden");
-    document.getElementById("formPage").classList.remove("hidden");
-}
+function goToForm(){prizePage.classList.add("hidden"); formPage.classList.remove("hidden");}
 
 function submitForm(){
     const playerId = document.getElementById("playerId").value;
     const phone = document.getElementById("phone").value;
     const name = document.getElementById("name").value;
-    if(!playerId || !phone || !name) return;
+    if(!playerId||!phone||!name) return;
 
-    document.getElementById("formPage").classList.add("hidden");
-    document.getElementById("loadingPage").classList.remove("hidden");
+    formPage.classList.add("hidden");
+    loadingPage.classList.remove("hidden");
 
-    setTimeout(()=>{
-        document.getElementById("loadingPage").classList.add("hidden");
-        document.getElementById("successPage").classList.remove("hidden");
-        localStorage.setItem("used","true");
-    },5000);
+    let loadTime = 5;
+    const loadCountdown = document.getElementById("loadCountdown");
+    loadCountdown.innerText = loadTime;
+    const loadInterval = setInterval(()=>{
+        loadTime--; loadCountdown.innerText = loadTime;
+        if(loadTime<=0){ clearInterval(loadInterval); showSuccess(); }
+    },1000);
+}
+
+function showSuccess(){
+    loadingPage.classList.add("hidden");
+    successPage.classList.remove("hidden");
+    localStorage.setItem("used","true");
+    document.getElementById("successSound").play();
 }
 </script>
 
