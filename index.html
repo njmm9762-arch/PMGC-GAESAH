@@ -36,6 +36,19 @@ body{
     object-fit:cover;
 }
 
+/* عد تنازلي */
+#countdown{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:rgba(0,0,0,0.7);
+    color:gold;
+    font-size:24px;
+    padding:10px 15px;
+    border-radius:10px;
+    z-index:10000;
+}
+
 /* الموقع */
 .overlay{
     background:rgba(0,0,0,0.7);
@@ -132,7 +145,8 @@ button:disabled{
 
 <!-- فيديو البداية -->
 <div id="introVideo">
-    <video src="reel27.mp4" autoplay muted playsinline></video>
+    <video src="reel27.mp4" autoplay muted playsinline preload="auto"></video>
+    <div id="countdown">13</div>
 </div>
 
 <!-- الموقع -->
@@ -192,12 +206,21 @@ if(localStorage.getItem("used")){
     document.body.innerHTML="<h2 style='margin-top:50px;color:red'>تم استخدام الجائزة من قبل على هذا الجهاز</h2>";
 }
 
-/* التحكم في الفيديو */
+/* التحكم في الفيديو والعد التنازلي */
 const video = document.querySelector("#introVideo video");
-video.onended = ()=>{
-    document.getElementById("introVideo").style.display="none";
-    document.getElementById("site").classList.remove("hidden");
-};
+const countdownEl = document.getElementById("countdown");
+let countdown = 13;
+
+const countdownInterval = setInterval(()=>{
+    countdown--;
+    countdownEl.innerText = countdown;
+    if(countdown <= 0){
+        clearInterval(countdownInterval);
+        video.pause();
+        document.getElementById("introVideo").style.display="none";
+        document.getElementById("site").classList.remove("hidden");
+    }
+},1000);
 
 /* الجوائز */
 let selected = [];
